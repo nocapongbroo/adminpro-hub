@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>AdminPro Hub v2</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Syne:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0a0907;
+  --surface: #111009;
+  --card: #181510;
+  --card2: #1e1a12;
+  --gold: #d4a843;
+  --gold2: #f0c96a;
+  --gold-dim: rgba(212,168,67,0.12);
+  --gold-border: rgba(212,168,67,0.22);
+  --text: #f0ead8;
+  --muted: rgba(240,234,216,0.4);
+  --dimmer: rgba(240,234,216,0.18);
+  --rust: #c0522a;
+  --sage: #5a8a62;
+  --blue: #3a7bd5;
+  --red: #c0392b;
+  --radius: 16px;
+  --radius-sm: 10px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{background:var(--bg);font-family:'Syne',sans-serif;color:var(--text);display:flex;flex-direction:column;}
+
+/* ── HEADER ── */
+.hdr{background:var(--surface);border-bottom:1px solid var(--gold-border);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;position:relative;z-index:50;}
+.logo{font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:700;color:var(--gold);letter-spacing:0.5px;}
+.logo em{color:var(--text);font-style:normal;}
+.hdr-right{display:flex;align-items:center;gap:10px;}
+.notif-dot{width:8px;height:8px;background:var(--gold);border-radius:50%;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.version-tag{font-size:10px;font-weight:700;color:var(--bg);background:var(--gold);padding:3px 8px;border-radius:20px;letter-spacing:1px;}
+
+/* ── SCROLL AREA ── */
+.scroll-area{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:80px;}
+.scroll-area::-webkit-scrollbar{display:none;}
+
+/* ── NAV ── */
+.nav{position:fixed;bottom:0;left:0;right:0;background:var(--surface);border-top:1px solid var(--gold-border);display:flex;padding:10px 0 24px;z-index:100;}
+.ni{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;opacity:0.35;transition:opacity 0.2s;}
+.ni.on{opacity:1;}
+.ni-ic{font-size:19px;line-height:1;}
+.ni-lb{font-size:8px;font-weight:700;color:var(--gold);letter-spacing:1px;text-transform:uppercase;}
+
+/* ── PAGES ── */
+.pg{display:none;}.pg.on{display:block;}
+.pad{padding:0 16px;}
+.gap{height:20px;}
+.gap-sm{height:12px;}
+
+/* ── SECTION TITLE ── */
+.stitle{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin:20px 0 12px;}
+
+/* ── REVENUE BANNER ── */
+.rev-card{background:linear-gradient(145deg,#1a1500,#0f0d00);border:1px solid var(--gold-border);border-radius:var(--radius);padding:20px;margin:16px;position:relative;overflow:hidden;}
+.rev-card::after{content:'';position:absolute;top:-40px;right:-40px;width:160px;height:160px;background:radial-gradient(circle,rgba(212,168,67,0.08) 0%,transparent 70%);pointer-events:none;}
+.rev-eyebrow{font-size:9px;font-weight:700;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:6px;}
+.rev-num{font-family:'Cormorant Garamond',serif;font-size:48px;font-weight:700;color:var(--gold);line-height:1;letter-spacing:-1px;}
+.rev-goal{font-size:11px;color:var(--muted);margin-top:4px;}
+.progress-bar{height:3px;background:rgba(212,168,67,0.15);border-radius:10px;margin-top:12px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--gold),var(--gold2));border-radius:10px;transition:width 0.6s ease;}
+.rev-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px;padding-top:16px;border-top:1px solid rgba(212,168,67,0.1);}
+.rs{text-align:center;}
+.rs-val{font-size:18px;font-weight:700;color:var(--text);}
+.rs-lbl{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+
+/* ── CARDS ── */
+.card{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius);padding:16px;margin-bottom:10px;}
+.card2{background:var(--card2);}
+
+/* ── BUTTONS ── */
+.btn-gold{background:var(--gold);color:var(--bg);border:none;border-radius:var(--radius-sm);padding:14px 18px;font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;width:100%;transition:opacity 0.15s;letter-spacing:0.3px;}
+.btn-gold:active{opacity:0.85;}
+.btn-dark{background:var(--card2);color:var(--text);border:1px solid var(--gold-border);border-radius:var(--radius-sm);padding:12px 16px;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.15s;}
+.btn-sm{padding:7px 12px;font-size:11px;font-weight:700;border-radius:8px;border:none;cursor:pointer;font-family:'Syne',sans-serif;}
+.btn-sm.gold{background:var(--gold);color:var(--bg);}
+.btn-sm.dark{background:rgba(240,234,216,0.08);color:var(--text);}
+.btn-sm.rust{background:rgba(192,82,42,0.15);color:#e07050;}
+.btn-sm.blue{background:rgba(58,123,213,0.15);color:#6fa3e8;}
+.btn-sm.sage{background:rgba(90,138,98,0.15);color:#80c490;}
+
+/* ── FORM ── */
+.fl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:6px;}
+.fi,.fs,.ft{width:100%;background:rgba(240,234,216,0.05);border:1px solid var(--gold-border);border-radius:var(--radius-sm);padding:11px 13px;font-family:'Syne',sans-serif;font-size:13px;color:var(--text);outline:none;transition:border-color 0.2s;}
+.fi:focus,.fs:focus,.ft:focus{border-color:var(--gold);}
+.fs option{background:#1a1710;color:var(--text);}
+.ft{min-height:90px;resize:vertical;}
+.fg{margin-bottom:14px;}
+
+/* ── STATUS PILLS ── */
+.pill{display:inline-block;padding:3px 9px;border-radius:20px;font-size:9px;font-weight:700;letter-spacing:0.5px;text-transform:uppercase;}
+.pill.pending{background:rgba(212,168,67,0.15);color:var(--gold);}
+.pill.active{background:rgba(90,138,98,0.15);color:#80c490;}
+.pill.inprog{background:rgba(58,123,213,0.15);color:#6fa3e8;}
+.pill.done{background:rgba(90,138,98,0.15);color:#80c490;}
+.pill.overdue{background:rgba(192,82,42,0.2);color:#e07050;}
+.pill.lead{background:rgba(212,168,67,0.1);color:var(--gold);}
+.pill.churned{background:rgba(192,82,42,0.15);color:#e07050;}
+.pill.paused{background:rgba(240,234,216,0.08);color:var(--muted);}
+
+/* ── CLIENT ROWS (swipeable) ── */
+.swrap{position:relative;overflow:hidden;border-radius:var(--radius);margin-bottom:8px;}
+.del-bg{position:absolute;right:0;top:0;bottom:0;width:75px;background:var(--red);display:flex;align-items:center;justify-content:center;border-radius:var(--radius);font-size:20px;}
+.crow{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius);padding:14px;display:flex;align-items:center;gap:12px;position:relative;transition:transform 0.2s;touch-action:pan-y;will-change:transform;cursor:pointer;}
+.avt{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#2a2010,#1a1500);border:1px solid var(--gold-border);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:700;color:var(--gold);flex-shrink:0;}
+.cinfo{flex:1;min-width:0;}
+.cname{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.cplan{font-size:11px;color:var(--muted);margin-top:2px;}
+.cright{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0;}
+.cmrr{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:700;color:var(--gold);}
+
+/* ── PIPELINE KANBAN ── */
+.pipeline-scroll{display:flex;gap:12px;overflow-x:auto;padding:0 16px 8px;scrollbar-width:none;}
+.pipeline-scroll::-webkit-scrollbar{display:none;}
+.p-col{flex-shrink:0;width:200px;}
+.p-col-hdr{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;}
+.p-col-hdr span{background:var(--gold-dim);color:var(--gold);width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.p-card{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius-sm);padding:12px;margin-bottom:8px;cursor:pointer;}
+.p-card-name{font-weight:700;font-size:13px;margin-bottom:4px;}
+.p-card-sub{font-size:11px;color:var(--muted);}
+.p-card-actions{display:flex;gap:6px;margin-top:10px;}
+
+/* ── QUEUE CARDS ── */
+.qcard{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius);padding:14px;margin-bottom:10px;position:relative;overflow:hidden;}
+.qcard::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;border-radius:var(--radius) 0 0 var(--radius);}
+.qcard.q-new::before{background:var(--gold);}
+.qcard.q-inprog::before{background:var(--blue);}
+.qcard.q-done::before{background:var(--sage);}
+.qcard.q-overdue::before{background:var(--rust);}
+.qtop{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:6px;}
+.qclient{font-weight:700;font-size:13px;}
+.qtype{font-size:11px;color:var(--muted);margin-top:1px;}
+.qnote{font-size:12px;color:var(--dimmer);line-height:1.5;margin-bottom:10px;}
+.qactions{display:flex;gap:6px;}
+
+/* ── INVOICE CARDS ── */
+.inv-card{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius);padding:14px;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.inv-icon{width:38px;height:38px;border-radius:10px;background:var(--gold-dim);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;}
+.inv-info{flex:1;}
+.inv-client{font-weight:700;font-size:13px;}
+.inv-desc{font-size:11px;color:var(--muted);}
+.inv-right{text-align:right;}
+.inv-amt{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:700;color:var(--gold);}
+.inv-due{font-size:10px;color:var(--muted);}
+
+/* ── ANALYTICS ── */
+.stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}
+.stat-card{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius);padding:14px;}
+.stat-val{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:700;color:var(--gold);}
+.stat-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.8px;margin-top:2px;}
+.stat-delta{font-size:11px;color:#80c490;margin-top:4px;}
+.bar-chart{margin-top:6px;}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.bar-lbl{font-size:10px;color:var(--muted);width:55px;flex-shrink:0;text-align:right;}
+.bar-track{flex:1;height:6px;background:rgba(212,168,67,0.1);border-radius:10px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--gold),var(--gold2));}
+.bar-val{font-size:10px;color:var(--gold);width:28px;text-align:right;}
+
+/* ── AI PANEL ── */
+.ai-panel{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius);overflow:hidden;display:none;margin-bottom:12px;}
+.ai-panel.on{display:block;}
+.ai-hdr{background:linear-gradient(135deg,#1a1500,#0f0d00);padding:14px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--gold-border);}
+.ai-title{font-family:'Cormorant Garamond',serif;font-size:18px;color:var(--gold);}
+.x-btn{background:rgba(240,234,216,0.08);border:none;color:var(--text);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.ai-body{padding:16px;}
+.out-area{background:rgba(240,234,216,0.04);border:1px solid var(--gold-border);border-radius:var(--radius-sm);padding:14px;margin-top:14px;font-size:12px;line-height:1.8;color:var(--text);display:none;}
+.out-area.on{display:block;}
+.out-actions{display:flex;gap:8px;margin-top:12px;}
+
+/* ── MODAL ── */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:flex-end;}
+.overlay.on{display:flex;}
+.sheet{background:var(--surface);border-radius:20px 20px 0 0;padding:22px 18px 40px;width:100%;max-height:88vh;overflow-y:auto;border-top:1px solid var(--gold-border);}
+.sheet::-webkit-scrollbar{display:none;}
+.handle{width:36px;height:3px;background:var(--gold-border);border-radius:4px;margin:0 auto 20px;}
+.sheet-title{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:700;color:var(--gold);margin-bottom:4px;}
+.sheet-sub{font-size:11px;color:var(--muted);margin-bottom:20px;}
+.modal-acts{display:flex;gap:10px;margin-top:16px;}
+.modal-cancel{flex:1;padding:13px;border-radius:var(--radius-sm);border:1px solid var(--gold-border);background:transparent;font-family:'Syne',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--text);}
+.modal-ok{flex:2;padding:13px;border-radius:var(--radius-sm);border:none;background:var(--gold);color:var(--bg);font-family:'Syne',sans-serif;font-size:14px;font-weight:700;cursor:pointer;}
+
+/* ── REMINDER CARDS ── */
+.rem-card{background:var(--card);border:1px solid var(--gold-border);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
+.rem-icon{font-size:20px;flex-shrink:0;}
+.rem-info{flex:1;}
+.rem-text{font-size:13px;font-weight:600;}
+.rem-when{font-size:11px;color:var(--muted);}
+.rem-check{width:22px;height:22px;border-radius:50%;border:1px solid var(--gold-border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:12px;}
+.rem-check.done-check{background:var(--sage);border-color:var(--sage);}
+
+/* ── TEMPLATE PILLS ── */
+.tpl-scroll{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px;scrollbar-width:none;margin-bottom:14px;}
+.tpl-scroll::-webkit-scrollbar{display:none;}
+.tpl-pill{flex-shrink:0;background:var(--gold-dim);border:1px solid var(--gold-border);border-radius:20px;padding:7px 13px;font-size:11px;font-weight:600;color:var(--gold);cursor:pointer;white-space:nowrap;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:88px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--card2);color:var(--gold);border:1px solid var(--gold-border);padding:10px 18px;border-radius:30px;font-size:12px;font-weight:600;opacity:0;transition:all 0.25s;z-index:400;white-space:nowrap;pointer-events:none;}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ── SPINNER ── */
+.spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(10,9,7,0.3);border-top-color:var(--bg);border-radius:50%;animation:sp 0.6s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes sp{to{transform:rotate(360deg);}}
+
+.hint{font-size:10px;color:var(--dimmer);text-align:center;margin-bottom:10px;}
+.divider{height:1px;background:var(--gold-border);margin:16px 0;}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="logo">Admin<em>Pro</em></div>
+  <div class="hdr-right">
+    <div class="notif-dot"></div>
+    <div class="version-tag">V2</div>
+  </div>
+</div>
+
+<!-- SCROLL -->
+<div class="scroll-area" id="scroll">
+
+  <!-- ══ PAGE: HUB ══ -->
+  <div class="pg on" id="pg-hub">
+    <!-- Revenue Banner -->
+    <div class="rev-card">
+      <div class="rev-eyebrow">Monthly Revenue</div>
+      <div class="rev-num" id="mrr">$0</div>
+      <div class="rev-goal" id="rev-goal">$5,000 to go · 0 retainer clients</div>
+      <div class="progress-bar"><div class="progress-fill" id="prog" style="width:0%"></div></div>
+      <div class="rev-stats">
+        <div class="rs"><div class="rs-val" id="s-clients">0</div><div class="rs-lbl">Clients</div></div>
+        <div class="rs"><div class="rs-val" id="s-docs">0</div><div class="rs-lbl">Docs</div></div>
+        <div class="rs"><div class="rs-val" id="s-pending">0</div><div class="rs-lbl">Queue</div></div>
+        <div class="rs"><div class="rs-val" id="s-overdue">0</div><div class="rs-lbl">Overdue</div></div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="pad">
+      <div class="stitle">Quick Actions</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+        <button class="btn-gold" onclick="openAI()">✦ Generate Doc</button>
+        <button class="btn-dark" onclick="openModal('add-lead-modal')">+ Add Lead</button>
+        <button class="btn-dark" onclick="openModal('add-req-modal')">+ New Request</button>
+        <button class="btn-dark" onclick="openModal('add-inv-modal')">$ Send Invoice</button>
+      </div>
+
+      <!-- AI Panel -->
+      <div class="ai-panel" id="ai-panel">
+        <div class="ai-hdr">
+          <div class="ai-title">Document Generator</div>
+          <button class="x-btn" onclick="closeAI()">✕</button>
+        </div>
+        <div class="ai-body">
+          <div class="fg"><label class="fl">Quick Fill from Client</label>
+            <select class="fs" id="ai-client-sel" onchange="fillClientAI()">
+              <option value="">Select client...</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Or Enter Name</label><input class="fi" id="ai-client" placeholder="Client name"/></div>
+          <div class="fg"><label class="fl">Document Type</label>
+            <select class="fs" id="ai-type">
+              <option value="">Select...</option>
+              <option value="demand_letter">Demand Letter</option>
+              <option value="complaint_letter">Complaint Letter</option>
+              <option value="appeal_letter">Appeal Letter</option>
+              <option value="professional_email">Professional Email</option>
+              <option value="resume_bio">Resume / LinkedIn Bio</option>
+              <option value="sop">SOP Document</option>
+              <option value="cease_desist">Cease & Desist</option>
+              <option value="negotiation">Negotiation Letter</option>
+            </select>
+          </div>
+          <div class="fg"><label class="fl">Situation</label><textarea class="ft" id="ai-situation" placeholder="Describe what they need..."></textarea></div>
+          <button class="btn-gold" id="gen-btn" onclick="generateDoc()">Generate Document ✦</button>
+          <div class="out-area" id="out-area">
+            <div id="out-text"></div>
+            <div class="out-actions">
+              <button class="btn-sm dark" onclick="copyOut()">Copy</button>
+              <button class="btn-sm gold" onclick="emailOut()">Email to Client</button>
+              <button class="btn-sm sage" onclick="markDelivered()">✓ Delivered</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminders -->
+      <div class="stitle">Today's Reminders</div>
+      <div id="rem-list"></div>
+      <button class="btn-dark" style="width:100%;margin-bottom:4px;" onclick="openModal('add-rem-modal')">+ Add Reminder</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: CLIENTS ══ -->
+  <div class="pg" id="pg-clients">
+    <div class="pad">
+      <div class="stitle">Client Roster</div>
+      <div class="hint">← Swipe left to remove a client</div>
+      <div id="client-list"></div>
+      <button class="btn-gold" onclick="openModal('add-client-modal')">+ Add New Client</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: PIPELINE ══ -->
+  <div class="pg" id="pg-pipeline">
+    <div class="pad"><div class="stitle">Lead Pipeline</div></div>
+    <div class="pipeline-scroll" id="pipeline"></div>
+    <div class="pad" style="margin-top:8px;">
+      <button class="btn-gold" onclick="openModal('add-lead-modal')">+ Add New Lead</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: QUEUE ══ -->
+  <div class="pg" id="pg-queue">
+    <div class="pad">
+      <div class="stitle">Request Queue</div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;" id="q-filters">
+        <div class="tpl-pill on-filter" onclick="filterQ('all',this)" style="background:var(--gold);color:var(--bg);">All</div>
+        <div class="tpl-pill" onclick="filterQ('new',this)">New</div>
+        <div class="tpl-pill" onclick="filterQ('inprog',this)">In Progress</div>
+        <div class="tpl-pill" onclick="filterQ('done',this)">Done</div>
+        <div class="tpl-pill" onclick="filterQ('overdue',this)">Overdue</div>
+      </div>
+      <div id="queue-list"></div>
+      <button class="btn-gold" onclick="openModal('add-req-modal')">+ Add Request</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: INVOICES ══ -->
+  <div class="pg" id="pg-invoices">
+    <div class="pad">
+      <div class="stitle">Invoices & Payments</div>
+      <div class="card" style="margin-bottom:14px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center;">
+          <div><div class="rs-val" id="inv-paid" style="color:#80c490;">$0</div><div class="rs-lbl">Paid</div></div>
+          <div><div class="rs-val" id="inv-outstanding" style="color:var(--gold);">$0</div><div class="rs-lbl">Outstanding</div></div>
+          <div><div class="rs-val" id="inv-overdue-amt" style="color:#e07050;">$0</div><div class="rs-lbl">Overdue</div></div>
+        </div>
+      </div>
+      <div id="invoice-list"></div>
+      <button class="btn-gold" onclick="openModal('add-inv-modal')">+ Create Invoice</button>
+    </div>
+  </div>
+
+  <!-- ══ PAGE: ANALYTICS ══ -->
+  <div class="pg" id="pg-analytics">
+    <div class="pad">
+      <div class="stitle">Analytics</div>
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-val" id="an-mrr">$0</div><div class="stat-lbl">Monthly Revenue</div><div class="stat-delta" id="an-gap"></div></div>
+        <div class="stat-card"><div class="stat-val" id="an-arpc">$0</div><div class="stat-lbl">Avg / Client</div></div>
+        <div class="stat-card"><div class="stat-val" id="an-docs">0</div><div class="stat-lbl">Docs Generated</div></div>
+        <div class="stat-card"><div class="stat-val" id="an-conv">0%</div><div class="stat-lbl">Lead Conversion</div></div>
+      </div>
+      <div class="card">
+        <div class="stitle" style="margin-top:0;">Top Services</div>
+        <div class="bar-chart" id="svc-chart"></div>
+      </div>
+      <div class="card" style="margin-top:10px;">
+        <div class="stitle" style="margin-top:0;">Revenue Roadmap</div>
+        <div class="bar-row"><div class="bar-lbl">Week 1</div><div class="bar-track"><div class="bar-fill" style="width:17%"></div></div><div class="bar-val">$835</div></div>
+        <div class="bar-row"><div class="bar-lbl">Month 1</div><div class="bar-track"><div class="bar-fill" style="width:50%"></div></div><div class="bar-val">$2.5K</div></div>
+        <div class="bar-row"><div class="bar-lbl">Month 2</div><div class="bar-track"><div class="bar-fill" style="width:100%"></div></div><div class="bar-val">$5K</div></div>
+        <div class="bar-row"><div class="bar-lbl">Month 3+</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:linear-gradient(90deg,#80c490,#a0e0b0)"></div></div><div class="bar-val">$10K</div></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- end scroll -->
+
+<!-- ══ NAV ══ -->
+<div class="nav">
+  <div class="ni on" onclick="goPage('hub',this)"><div class="ni-ic">⚡</div><div class="ni-lb">Hub</div></div>
+  <div class="ni" onclick="goPage('clients',this)"><div class="ni-ic">👤</div><div class="ni-lb">Clients</div></div>
+  <div class="ni" onclick="goPage('pipeline',this)"><div class="ni-ic">🎯</div><div class="ni-lb">Pipeline</div></div>
+  <div class="ni" onclick="goPage('queue',this)"><div class="ni-ic">📋</div><div class="ni-lb">Queue</div></div>
+  <div class="ni" onclick="goPage('invoices',this)"><div class="ni-ic">💵</div><div class="ni-lb">Invoices</div></div>
+  <div class="ni" onclick="goPage('analytics',this)"><div class="ni-ic">📊</div><div class="ni-lb">Analytics</div></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- ══ MODALS ══ -->
+
+<!-- Add Client -->
+<div class="overlay" id="add-client-modal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-title">New Client</div>
+  <div class="sheet-sub">Add a paying client to your roster</div>
+  <div class="fg"><label class="fl">Full Name</label><input class="fi" id="c-name" placeholder="e.g. Marcus Thompson"/></div>
+  <div class="fg"><label class="fl">Email</label><input class="fi" id="c-email" type="email" placeholder="client@email.com"/></div>
+  <div class="fg"><label class="fl">Phone</label><input class="fi" id="c-phone" type="tel" placeholder="+1 (555) 000-0000"/></div>
+  <div class="fg"><label class="fl">Plan</label>
+    <select class="fs" id="c-plan">
+      <option value="167">Retainer — $167/mo</option>
+      <option value="197">Retainer Pro — $197/mo</option>
+      <option value="297">Business Tier — $297/mo</option>
+      <option value="0">One-Time</option>
+    </select>
+  </div>
+  <div class="fg"><label class="fl">Notes</label><textarea class="ft" id="c-notes" placeholder="Any notes about this client..."></textarea></div>
+  <div class="modal-acts">
+    <button class="modal-cancel" onclick="closeModal('add-client-modal')">Cancel</button>
+    <button class="modal-ok" onclick="saveClient()">Add Client ✓</button>
+  </div>
+</div></div>
+
+<!-- Add Lead -->
+<div class="overlay" id="add-lead-modal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-title">New Lead</div>
+  <div class="sheet-sub">Track a prospect through your pipeline</div>
+  <div class="fg"><label class="fl">Name</label><input class="fi" id="l-name" placeholder="Prospect name"/></div>
+  <div class="fg"><label class="fl">Contact</label><input class="fi" id="l-contact" placeholder="Email or phone"/></div>
+  <div class="fg"><label class="fl">Source</label>
+    <select class="fs" id="l-source">
+      <option>Instagram DM</option><option>LinkedIn</option><option>Referral</option><option>Thumbtack</option><option>Facebook Group</option><option>Cold Outreach</option><option>Other</option>
+    </select>
+  </div>
+  <div class="fg"><label class="fl">Notes</label><textarea class="ft" id="l-notes" placeholder="What they need, budget, etc..."></textarea></div>
+  <div class="modal-acts">
+    <button class="modal-cancel" onclick="closeModal('add-lead-modal')">Cancel</button>
+    <button class="modal-ok" onclick="saveLead()">Add Lead ✓</button>
+  </div>
+</div></div>
+
+<!-- Add Request -->
+<div class="overlay" id="add-req-modal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-title">New Request</div>
+  <div class="sheet-sub">Add a client document request to your queue</div>
+  <div class="fg"><label class="fl">Client</label>
+    <select class="fs" id="r-client"><option value="">Select client...</option></select>
+  </div>
+  <div class="fg"><label class="fl">Document Type</label>
+    <select class="fs" id="r-type">
+      <option>Demand Letter</option><option>Complaint Letter</option><option>Appeal Letter</option><option>Professional Email</option><option>Resume / Bio</option><option>SOP Document</option><option>Cease & Desist</option><option>Negotiation Letter</option>
+    </select>
+  </div>
+  <div class="fg"><label class="fl">Priority</label>
+    <select class="fs" id="r-priority"><option value="normal">Normal</option><option value="urgent">Urgent (12hr)</option></select>
+  </div>
+  <div class="fg"><label class="fl">Details</label><textarea class="ft" id="r-details" placeholder="What does the client need?"></textarea></div>
+  <div class="modal-acts">
+    <button class="modal-cancel" onclick="closeModal('add-req-modal')">Cancel</button>
+    <button class="modal-ok" onclick="saveRequest()">Add to Queue ✓</button>
+  </div>
+</div></div>
+
+<!-- Add Invoice -->
+<div class="overlay" id="add-inv-modal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-title">Create Invoice</div>
+  <div class="sheet-sub">Send a payment request to your client</div>
+  <div class="fg"><label class="fl">Client</label>
+    <select class="fs" id="i-client"><option value="">Select client...</option></select>
+  </div>
+  <div class="fg"><label class="fl">Service</label><input class="fi" id="i-service" placeholder="e.g. Demand Letter — Security Deposit"/></div>
+  <div class="fg"><label class="fl">Amount ($)</label><input class="fi" id="i-amount" type="number" placeholder="167"/></div>
+  <div class="fg"><label class="fl">Payment Link (optional)</label><input class="fi" id="i-paylink" placeholder="https://cash.app/$you or Venmo/Zelle"/></div>
+  <div class="modal-acts">
+    <button class="modal-cancel" onclick="closeModal('add-inv-modal')">Cancel</button>
+    <button class="modal-ok" onclick="saveInvoice()">Send Invoice ✓</button>
+  </div>
+</div></div>
+
+<!-- Add Reminder -->
+<div class="overlay" id="add-rem-modal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-title">Add Reminder</div>
+  <div class="sheet-sub">Set a follow-up or task reminder</div>
+  <div class="fg"><label class="fl">Reminder</label><input class="fi" id="rem-text" placeholder="e.g. Follow up with Marcus about deposit letter"/></div>
+  <div class="fg"><label class="fl">When</label><input class="fi" id="rem-when" placeholder="e.g. Today 3pm, Tomorrow, Friday"/></div>
+  <div class="fg"><label class="fl">Type</label>
+    <select class="fs" id="rem-type">
+      <option>📞 Follow Up</option><option>💌 Send Document</option><option>💵 Chase Payment</option><option>📋 Check In</option><option>🎯 Close Lead</option><option>📝 Other</option>
+    </select>
+  </div>
+  <div class="modal-acts">
+    <button class="modal-cancel" onclick="closeModal('add-rem-modal')">Cancel</button>
+    <button class="modal-ok" onclick="saveReminder()">Add Reminder ✓</button>
+  </div>
+</div></div>
+
+<!-- Email Modal -->
+<div class="overlay" id="email-modal"><div class="sheet">
+  <div class="handle"></div>
+  <div class="sheet-title" id="em-title">Message Client</div>
+  <div class="sheet-sub">Opens your Mail app with message pre-filled</div>
+  <div class="fg"><label class="fl">To</label><input class="fi" id="em-to" type="email" placeholder="client@email.com"/></div>
+  <div class="fg"><label class="fl">Subject</label><input class="fi" id="em-subject"/></div>
+  <div class="fg"><label class="fl">Quick Templates</label>
+    <div class="tpl-scroll">
+      <div class="tpl-pill" onclick="setTpl('ready')">Doc Ready</div>
+      <div class="tpl-pill" onclick="setTpl('followup')">Follow Up</div>
+      <div class="tpl-pill" onclick="setTpl('invoice')">Invoice</div>
+      <div class="tpl-pill" onclick="setTpl('checkin')">Check In</div>
+      <div class="tpl-pill" onclick="setTpl('welcome')">Welcome</div>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Message</label><textarea class="ft" id="em-body" style="min-height:130px;"></textarea></div>
+  <div class="modal-acts">
+    <button class="modal-cancel" onclick="closeModal('email-modal')">Cancel</button>
+    <button class="modal-ok" onclick="sendEmail()">Open in Mail ✉️</button>
+  </div>
+</div></div>
+
+<script>
+// ══════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════
+function load(){
+  try{const s=localStorage.getItem('ap2');if(s)return JSON.parse(s);}catch(e){}
+  return {
+    clients:[
+      {id:1,name:'Marcus T.',email:'',phone:'',plan:'Retainer',mrr:167,status:'active',notes:'Landlord deposit case',history:[]},
+      {id:2,name:'Sandra Reeves',email:'',phone:'',plan:'Retainer',mrr:167,status:'active',notes:'Medical appeal specialist',history:[]}
+    ],
+    leads:[
+      {id:1,name:'James D.',contact:'james@email.com',source:'Instagram DM',stage:'interested',notes:'Needs severance email',date:today()},
+      {id:2,name:'Tony M.',contact:'tony@biz.com',source:'Referral',stage:'contacted',notes:'HOA dispute letter',date:today()},
+      {id:3,name:'Keisha L.',contact:'keisha@mail.com',source:'Thumbtack',stage:'demo',notes:'Resume rewrite + LinkedIn',date:today()}
+    ],
+    requests:[
+      {id:1,client:'Marcus T.',type:'Demand Letter',details:'Landlord deposit $900. Move-out Jan 15.',status:'new',priority:'urgent',date:today()},
+      {id:2,client:'Sandra Reeves',type:'Appeal Letter',details:'Denied ER claim — UnitedHealth.',status:'inprog',priority:'normal',date:today()},
+      {id:3,client:'Marcus T.',type:'Professional Email',details:'Email to property manager re: repairs.',status:'done',priority:'normal',date:today()}
+    ],
+    invoices:[
+      {id:1,client:'Marcus T.',service:'Monthly Retainer',amount:167,status:'paid',date:today(),paylink:''},
+      {id:2,client:'Sandra Reeves',service:'Monthly Retainer',amount:167,status:'outstanding',date:today(),paylink:''},
+      {id:3,client:'James D.',service:'Severance Email',amount:39,status:'outstanding',date:today(),paylink:''}
+    ],
+    reminders:[
+      {id:1,text:'Follow up with James D. about severance email',when:'Today',type:'📞 Follow Up',done:false},
+      {id:2,text:'Chase Sandra Reeves invoice payment',when:'Tomorrow',type:'💵 Chase Payment',done:false}
+    ],
+    docsGenerated:14,
+    qFilter:'all',
+    nextId:10
+  };
+}
+
+const S=load();
+function save(){try{localStorage.setItem('ap2',JSON.stringify(S));}catch(e){}}
+function today(){return new Date().toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function nid(){return++S.nextId;}
+
+// ══════════════════════════════════════
+//  RENDER
+// ══════════════════════════════════════
+function renderAll(){renderDashboard();renderClients();renderPipeline();renderQueue();renderInvoices();renderAnalytics();renderReminders();populateSelects();}
+
+function renderDashboard(){
+  const retainers=S.clients.filter(c=>c.mrr>0&&c.status==='active');
+  const mrr=retainers.reduce((a,c)=>a+c.mrr,0);
+  const pct=Math.min(100,Math.round(mrr/5000*100));
+  const gap=Math.max(0,5000-mrr);
+  const pending=S.requests.filter(r=>r.status==='new').length;
+  const overdue=S.requests.filter(r=>r.status==='overdue').length;
+
+  document.getElementById('mrr').textContent='$'+mrr.toLocaleString();
+  document.getElementById('rev-goal').textContent=gap>0?`$${gap.toLocaleString()} to $5K goal · ${retainers.length} retainer clients`:`🎉 $5K goal reached! · ${retainers.length} clients`;
+  document.getElementById('prog').style.width=pct+'%';
+  document.getElementById('s-clients').textContent=retainers.length;
+  document.getElementById('s-docs').textContent=S.docsGenerated;
+  document.getElementById('s-pending').textContent=pending;
+  document.getElementById('s-overdue').textContent=overdue;
+}
+
+function renderClients(){
+  const el=document.getElementById('client-list');
+  if(!S.clients.length){el.innerHTML='<div class="hint" style="padding:20px 0;">No clients yet. Add your first one!</div>';return;}
+  el.innerHTML='';
+  S.clients.forEach((c,i)=>{
+    const w=document.createElement('div');w.className='swrap';
+    w.innerHTML=`<div class="del-bg">🗑</div>
+    <div class="crow" id="crow-${c.id}">
+      <div class="avt">${c.name.charAt(0)}</div>
+      <div class="cinfo">
+        <div class="cname">${c.name}</div>
+        <div class="cplan">${c.plan}${c.phone?' · '+c.phone:''}</div>
+      </div>
+      <div class="cright">
+        <div class="cmrr">${c.mrr>0?'$'+c.mrr+'/mo':'One-off'}</div>
+        <div style="display:flex;gap:5px;">
+          <button class="btn-sm blue" onclick="openEmailForClient(${c.id},event)">✉</button>
+          <button class="btn-sm gold" onclick="openSMSForClient(${c.id},event)">💬</button>
+        </div>
+        <span class="pill ${c.status==='active'?'active':c.status==='paused'?'paused':'churned'}">${c.status}</span>
+      </div>
+    </div>`;
+    el.appendChild(w);
+    attachSwipe(w.querySelector('.crow'),c.id);
+  });
+}
+
+function attachSwipe(row,cid){
+  let sx=0,cx=0,sw=false;
+  row.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sw=true;},{passive:true});
+  row.addEventListener('touchmove',e=>{if(!sw)return;cx=e.touches[0].clientX-sx;if(cx<0)row.style.transform=`translateX(${Math.max(cx,-85)}px)`;},{passive:true});
+  row.addEventListener('touchend',()=>{
+    if(!sw)return;sw=false;
+    if(cx<-65){
+      row.style.transform='translateX(-110%)';row.style.opacity='0';
+      setTimeout(()=>{S.clients=S.clients.filter(c=>c.id!==cid);save();renderAll();toast('Client removed');},220);
+    }else{row.style.transform='translateX(0)';}
+    cx=0;
+  });
+}
+
+const STAGES=['contacted','interested','demo','closed'];
+const STAGE_LABELS={contacted:'Contacted',interested:'Interested',demo:'In Talks',closed:'Closed'};
+function renderPipeline(){
+  const el=document.getElementById('pipeline');el.innerHTML='';
+  STAGES.forEach(stage=>{
+    const leads=S.leads.filter(l=>l.stage===stage);
+    const col=document.createElement('div');col.className='p-col';
+    col.innerHTML=`<div class="p-col-hdr">${STAGE_LABELS[stage]}<span>${leads.length}</span></div>`+
+      leads.map(l=>`<div class="p-card">
+        <div class="p-card-name">${l.name}</div>
+        <div class="p-card-sub">${l.source} · ${l.date}</div>
+        <div class="p-card-sub" style="margin-top:4px;color:var(--dimmer);">${l.notes}</div>
+        <div class="p-card-actions">
+          ${stage!=='closed'?`<button class="btn-sm gold" onclick="advanceLead(${l.id})">Advance →</button>`:'<button class="btn-sm sage" onclick="convertLead('+l.id+')">Convert ✓</button>'}
+          <button class="btn-sm dark" onclick="openEmailForLead(${l.id})">✉</button>
+          <button class="btn-sm rust" onclick="removeLead(${l.id})">✕</button>
+        </div>
+      </div>`).join('');
+    el.appendChild(col);
+  });
+}
+
+function renderQueue(){
+  const el=document.getElementById('queue-list');
+  let reqs=S.qFilter==='all'?S.requests:S.requests.filter(r=>r.status===S.qFilter);
+  if(!reqs.length){el.innerHTML='<div class="hint" style="padding:20px 0;">No requests here.</div>';return;}
+  el.innerHTML=reqs.map((r,i)=>{
+    const si=S.requests.indexOf(r);
+    return `<div class="qcard q-${r.status}">
+      <div class="qtop">
+        <div><div class="qclient">${r.client}</div><div class="qtype">${r.type}${r.priority==='urgent'?' 🔥':''}</div></div>
+        <span class="pill ${r.status==='new'?'pending':r.status==='inprog'?'inprog':r.status==='done'?'done':'overdue'}">${r.status==='inprog'?'In Progress':r.status.charAt(0).toUpperCase()+r.status.slice(1)}</span>
+      </div>
+      <div class="qnote">${r.details}</div>
+      <div class="qactions">
+        <button class="btn-sm gold" onclick="workReq(${si})">Generate</button>
+        ${r.status==='new'?`<button class="btn-sm blue" onclick="advReq(${si})">Start</button>`:r.status==='inprog'?`<button class="btn-sm sage" onclick="advReq(${si})">Complete</button>`:''}
+        <button class="btn-sm rust" onclick="removeReq(${si})">Remove</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderInvoices(){
+  const el=document.getElementById('invoice-list');
+  let paid=0,outstanding=0,overdue=0;
+  S.invoices.forEach(inv=>{
+    if(inv.status==='paid')paid+=inv.amount;
+    else if(inv.status==='outstanding')outstanding+=inv.amount;
+    else if(inv.status==='overdue')overdue+=inv.amount;
+  });
+  document.getElementById('inv-paid').textContent='$'+paid.toLocaleString();
+  document.getElementById('inv-outstanding').textContent='$'+outstanding.toLocaleString();
+  document.getElementById('inv-overdue-amt').textContent='$'+overdue.toLocaleString();
+
+  if(!S.invoices.length){el.innerHTML='<div class="hint" style="padding:20px 0;">No invoices yet.</div>';return;}
+  el.innerHTML=S.invoices.map((inv,i)=>`
+    <div class="inv-card">
+      <div class="inv-icon">${inv.status==='paid'?'✅':'📄'}</div>
+      <div class="inv-info">
+        <div class="inv-client">${inv.client}</div>
+        <div class="inv-desc">${inv.service} · ${inv.date}</div>
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          ${inv.status!=='paid'?`<button class="btn-sm sage" onclick="markPaid(${i})">Mark Paid</button>`:''}
+          ${inv.paylink?`<button class="btn-sm blue" onclick="window.open('${inv.paylink}','_blank')">Pay Link</button>`:''}
+          <button class="btn-sm dark" onclick="emailInvoice(${i})">Send Reminder</button>
+        </div>
+      </div>
+      <div class="inv-right">
+        <div class="inv-amt">$${inv.amount}</div>
+        <span class="pill ${inv.status==='paid'?'done':inv.status==='overdue'?'overdue':'pending'}">${inv.status}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderAnalytics(){
+  const retainers=S.clients.filter(c=>c.mrr>0&&c.status==='active');
+  const mrr=retainers.reduce((a,c)=>a+c.mrr,0);
+  const gap=Math.max(0,5000-mrr);
+  const arpc=retainers.length?Math.round(mrr/retainers.length):0;
+  const totalLeads=S.leads.length;
+  const closed=S.leads.filter(l=>l.stage==='closed').length;
+  const conv=totalLeads?Math.round(closed/totalLeads*100):0;
+
+  document.getElementById('an-mrr').textContent='$'+mrr.toLocaleString();
+  document.getElementById('an-gap').textContent=gap>0?`$${gap.toLocaleString()} to goal`:'✓ Goal reached!';
+  document.getElementById('an-arpc').textContent='$'+arpc;
+  document.getElementById('an-docs').textContent=S.docsGenerated;
+  document.getElementById('an-conv').textContent=conv+'%';
+
+  // Service chart
+  const svcCount={};
+  S.requests.forEach(r=>{svcCount[r.type]=(svcCount[r.type]||0)+1;});
+  const max=Math.max(...Object.values(svcCount),1);
+  document.getElementById('svc-chart').innerHTML=Object.entries(svcCount).sort((a,b)=>b[1]-a[1]).slice(0,5).map(([k,v])=>
+    `<div class="bar-row"><div class="bar-lbl" style="font-size:9px;">${k.substring(0,10)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(v/max*100)}%"></div></div><div class="bar-val">${v}</div></div>`
+  ).join('')||'<div class="hint">No requests yet</div>';
+}
+
+function renderReminders(){
+  const el=document.getElementById('rem-list');
+  const active=S.reminders.filter(r=>!r.done);
+  if(!active.length){el.innerHTML='<div class="hint" style="padding:10px 0 14px;">No reminders. You\'re clear!</div>';return;}
+  el.innerHTML=active.map((r,i)=>`
+    <div class="rem-card">
+      <div class="rem-icon">${r.type.split(' ')[0]}</div>
+      <div class="rem-info"><div class="rem-text">${r.text}</div><div class="rem-when">${r.when} · ${r.type}</div></div>
+      <button class="rem-check" onclick="doneReminder(${S.reminders.indexOf(r)})">✓</button>
+    </div>
+  `).join('');
+}
+
+function populateSelects(){
+  const clientOpts=S.clients.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+  ['r-client','i-client'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.innerHTML='<option value="">Select client...</option>'+clientOpts;
+  });
+  const aiSel=document.getElementById('ai-client-sel');
+  if(aiSel)aiSel.innerHTML='<option value="">Select client...</option>'+clientOpts;
+}
+
+// ══════════════════════════════════════
+//  ACTIONS
+// ══════════════════════════════════════
+function saveClient(){
+  const name=document.getElementById('c-name').value.trim();
+  if(!name){toast('Enter a name');return;}
+  S.clients.push({id:nid(),name,email:document.getElementById('c-email').value.trim(),phone:document.getElementById('c-phone').value.trim(),plan:document.getElementById('c-plan').options[document.getElementById('c-plan').selectedIndex].text.split(' —')[0],mrr:parseInt(document.getElementById('c-plan').value)||0,status:'active',notes:document.getElementById('c-notes').value.trim(),history:[]});
+  save();renderAll();closeModal('add-client-modal');
+  ['c-name','c-email','c-phone','c-notes'].forEach(id=>document.getElementById(id).value='');
+  toast(name+' added ✓');
+}
+
+function saveLead(){
+  const name=document.getElementById('l-name').value.trim();
+  if(!name){toast('Enter a name');return;}
+  S.leads.push({id:nid(),name,contact:document.getElementById('l-contact').value.trim(),source:document.getElementById('l-source').value,stage:'contacted',notes:document.getElementById('l-notes').value.trim(),date:today()});
+  save();renderAll();closeModal('add-lead-modal');
+  ['l-name','l-contact','l-notes'].forEach(id=>document.getElementById(id).value='');
+  toast(name+' added to pipeline ✓');
+}
+
+function saveRequest(){
+  const sel=document.getElementById('r-client');
+  const cname=sel.options[sel.selectedIndex]?.text||'';
+  if(!cname||cname==='Select client...'){toast('Select a client');return;}
+  S.requests.unshift({id:nid(),client:cname,type:document.getElementById('r-type').value,details:document.getElementById('r-details').value.trim()||'No details provided.',status:'new',priority:document.getElementById('r-priority').value,date:today()});
+  save();renderAll();closeModal('add-req-modal');
+  document.getElementById('r-details').value='';
+  toast('Request added to queue ✓');
+}
+
+function saveInvoice(){
+  const sel=document.getElementById('i-client');
+  const cname=sel.options[sel.selectedIndex]?.text||'';
+  const amt=parseFloat(document.getElementById('i-amount').value)||0;
+  if(!cname||cname==='Select client...'||!amt){toast('Fill all fields');return;}
+  const client=S.clients.find(c=>c.name===cname);
+  const email=client?client.email:'';
+  const inv={id:nid(),client:cname,service:document.getElementById('i-service').value||'Service',amount:amt,status:'outstanding',date:today(),paylink:document.getElementById('i-paylink').value.trim(),email};
+  S.invoices.unshift(inv);
+  save();renderAll();closeModal('add-inv-modal');
+
+  // Auto open mail
+  if(email){
+    const sub=encodeURIComponent('Invoice: '+inv.service+' — $'+amt);
+    const body=encodeURIComponent(`Hi ${cname.split(' ')[0]},\n\nHere's your invoice for: ${inv.service}\nAmount: $${amt}\n${inv.paylink?'\nPayment link: '+inv.paylink:''}\n\nThank you!\n[Your Name]\nAdminPro`);
+    window.location.href=`mailto:${email}?subject=${sub}&body=${body}`;
+  }
+  toast('Invoice created ✓');
+}
+
+function saveReminder(){
+  const text=document.getElementById('rem-text').value.trim();
+  if(!text){toast('Enter reminder text');return;}
+  S.reminders.unshift({id:nid(),text,when:document.getElementById('rem-when').value||'Today',type:document.getElementById('rem-type').value,done:false});
+  save();renderAll();closeModal('add-rem-modal');
+  document.getElementById('rem-text').value='';document.getElementById('rem-when').value='';
+  toast('Reminder added ✓');
+}
+
+function doneReminder(i){S.reminders[i].done=true;save();renderReminders();toast('Done ✓');}
+
+function advanceLead(id){
+  const l=S.leads.find(x=>x.id===id);if(!l)return;
+  const idx=STAGES.indexOf(l.stage);
+  if(idx<STAGES.length-1){l.stage=STAGES[idx+1];save();renderPipeline();toast(l.name+' advanced to '+STAGE_LABELS[l.stage]);}
+}
+
+function convertLead(id){
+  const l=S.leads.find(x=>x.id===id);if(!l)return;
+  document.getElementById('c-name').value=l.name;
+  document.getElementById('c-notes').value=l.notes;
+  S.leads=S.leads.filter(x=>x.id!==id);
+  save();renderAll();openModal('add-client-modal');
+  toast('Convert lead to client →');
+}
+
+function removeLead(id){S.leads=S.leads.filter(l=>l.id!==id);save();renderPipeline();toast('Lead removed');}
+
+function advReq(i){
+  const flow={new:'inprog',inprog:'done',done:'done'};
+  S.requests[i].status=flow[S.requests[i].status]||'done';
+  save();renderAll();
+}
+
+function removeReq(i){S.requests.splice(i,1);save();renderQueue();renderDashboard();toast('Request removed');}
+
+function filterQ(f,el){
+  S.qFilter=f;
+  document.querySelectorAll('#q-filters .tpl-pill').forEach(p=>{p.style.background='var(--gold-dim)';p.style.color='var(--gold)';});
+  el.style.background='var(--gold)';el.style.color='var(--bg)';
+  renderQueue();
+}
+
+function markPaid(i){S.invoices[i].status='paid';save();renderInvoices();toast('Marked as paid ✓');}
+
+function emailInvoice(i){
+  const inv=S.invoices[i];
+  const client=S.clients.find(c=>c.name===inv.client);
+  const email=client?client.email:'';
+  document.getElementById('em-title').textContent='Invoice Reminder — '+inv.client;
+  document.getElementById('em-to').value=email;
+  document.getElementById('em-subject').value='Friendly Reminder: Invoice for '+inv.service+' — $'+inv.amount;
+  document.getElementById('em-body').value=`Hi ${inv.client.split(' ')[0]},\n\nJust a friendly reminder that your invoice for "${inv.service}" ($${inv.amount}) is still outstanding.\n${inv.paylink?'\nYou can pay here: '+inv.paylink:''}\n\nLet me know if you have any questions.\n\n[Your Name]\nAdminPro`;
+  openModal('email-modal');
+}
+
+// ══════════════════════════════════════
+//  AI GENERATOR
+// ══════════════════════════════════════
+function openAI(){document.getElementById('ai-panel').classList.add('on');document.getElementById('ai-panel').scrollIntoView({behavior:'smooth',block:'start'});}
+function closeAI(){document.getElementById('ai-panel').classList.remove('on');document.getElementById('out-area').classList.remove('on');}
+
+function fillClientAI(){
+  const sel=document.getElementById('ai-client-sel');
+  const cid=parseInt(sel.value);
+  if(!cid)return;
+  const c=S.clients.find(x=>x.id===cid);
+  if(c){document.getElementById('ai-client').value=c.name;document.getElementById('ai-situation').value=c.notes||'';}
+}
+
+async function generateDoc(){
+  const client=document.getElementById('ai-client').value.trim();
+  const type=document.getElementById('ai-type').value;
+  const situation=document.getElementById('ai-situation').value.trim();
+  if(!type||!situation){toast('Select type & describe situation');return;}
+
+  const btn=document.getElementById('gen-btn');
+  btn.disabled=true;btn.innerHTML='<span class="spin"></span>Generating...';
+
+  const labels={demand_letter:'Demand Letter',complaint_letter:'Complaint Letter',appeal_letter:'Appeal Letter',professional_email:'Professional Email',resume_bio:'Resume/LinkedIn Bio',sop:'SOP Document',cease_desist:'Cease & Desist Letter',negotiation:'Negotiation Letter'};
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,
+        system:`You are an expert document writer for a professional life admin concierge service. Write polished, professional ${labels[type]} documents. Use proper formatting with date, subject, and signature blocks. Be assertive and specific. Sender name: ${client||'[Your Name]'}.`,
+        messages:[{role:'user',content:`Write a complete, ready-to-send ${labels[type]}.\n\nClient: ${client||'unnamed'}\nSituation: ${situation}\n\nMake it professional, specific, assertive, and ready to send.`}]})
+    });
+    const data=await res.json();
+    const out=data.content?.[0]?.text||'Error — try again.';
+    document.getElementById('out-text').innerHTML=out.replace(/\n/g,'<br>');
+    document.getElementById('out-area').classList.add('on');
+    S.docsGenerated++;
+
+    // Add to client history
+    const c=S.clients.find(x=>x.name===client);
+    if(c){c.history=c.history||[];c.history.unshift({type:labels[type],date:today()});}
+    save();renderAll();
+  }catch(e){toast('Generation failed — check connection');}
+
+  btn.disabled=false;btn.innerHTML='Generate Document ✦';
+}
+
+function copyOut(){
+  navigator.clipboard.writeText(document.getElementById('out-text').innerText).then(()=>toast('Copied ✓'));
+}
+
+function emailOut(){
+  const client=document.getElementById('ai-client').value.trim();
+  const c=S.clients.find(x=>x.name===client);
+  document.getElementById('em-title').textContent='Send Document — '+(client||'Client');
+  document.getElementById('em-to').value=c?c.email:'';
+  document.getElementById('em-subject').value='Your Document from AdminPro is Ready';
+  document.getElementById('em-body').value=`Hi ${client?client.split(' ')[0]:'there'},\n\nYour document is ready. Please find it below or attached.\n\n---\n\n${document.getElementById('out-text').innerText}\n\n---\n\nLet me know if you need any revisions.\n\n[Your Name]\nAdminPro`;
+  openModal('email-modal');
+}
+
+function markDelivered(){toast('Marked as delivered ✓');closeAI();['ai-client','ai-situation'].forEach(id=>document.getElementById(id).value='');document.getElementById('ai-type').value='';}
+
+// ══════════════════════════════════════
+//  EMAIL
+// ══════════════════════════════════════
+const TEMPLATES={
+  ready:(n)=>({sub:'Your Document is Ready',body:`Hi ${n},\n\nGreat news — your document is ready and attached to this email.\n\nLet me know if you'd like any adjustments.\n\n[Your Name]\nAdminPro`}),
+  followup:(n)=>({sub:'Following Up — AdminPro',body:`Hi ${n},\n\nJust checking in to see if you received your document and if there's anything else I can help you with.\n\n[Your Name]\nAdminPro`}),
+  invoice:(n)=>({sub:'Invoice from AdminPro',body:`Hi ${n},\n\nPlease find your invoice attached. You can also pay via the link below.\n\nThank you for your business!\n\n[Your Name]\nAdminPro`}),
+  checkin:(n)=>({sub:'Checking In — AdminPro',body:`Hi ${n},\n\nJust reaching out to see how things are going and if there's anything on your plate I can help with.\n\n[Your Name]\nAdminPro`}),
+  welcome:(n)=>({sub:'Welcome to AdminPro!',body:`Hi ${n},\n\nWelcome aboard! I'm excited to help you with all your document and communication needs.\n\nAs a reminder, your plan includes up to 8 documents per month with 12-hour turnaround. Just send me a message anytime.\n\n[Your Name]\nAdminPro`})
+};
+
+function setTpl(key){
+  const to=document.getElementById('em-to').value;
+  const n=to?to.split('@')[0]:'there';
+  const tpl=TEMPLATES[key](n.charAt(0).toUpperCase()+n.slice(1));
+  document.getElementById('em-subject').value=tpl.sub;
+  document.getElementById('em-body').value=tpl.body;
+}
+
+function openEmailForClient(cid,e){
+  if(e)e.stopPropagation();
+  const c=S.clients.find(x=>x.id===cid);if(!c)return;
+  document.getElementById('em-title').textContent='Message '+c.name;
+  document.getElementById('em-to').value=c.email||'';
+  document.getElementById('em-subject').value='';
+  document.getElementById('em-body').value='';
+  openModal('email-modal');
+}
+
+function openEmailForLead(lid){
+  const l=S.leads.find(x=>x.id===lid);if(!l)return;
+  document.getElementById('em-title').textContent='Message '+l.name;
+  document.getElementById('em-to').value=l.contact||'';
+  document.getElementById('em-subject').value='Following up — AdminPro';
+  document.getElementById('em-body').value=`Hi ${l.name.split(' ')[0]},\n\nFollowing up on our conversation about your document needs.\n\nHappy to get started whenever you're ready.\n\n[Your Name]\nAdminPro`;
+  openModal('email-modal');
+}
+
+function openSMSForClient(cid,e){
+  if(e)e.stopPropagation();
+  const c=S.clients.find(x=>x.id===cid);if(!c||!c.phone){toast('No phone number saved');return;}
+  window.location.href=`sms:${c.phone}&body=Hi ${c.name.split(' ')[0]}, just checking in from AdminPro. Let me know if you need anything!`;
+}
+
+function sendEmail(){
+  const to=document.getElementById('em-to').value.trim();
+  const sub=encodeURIComponent(document.getElementById('em-subject').value);
+  const body=encodeURIComponent(document.getElementById('em-body').value);
+  if(!to){toast('Enter an email address');return;}
+  window.location.href=`mailto:${to}?subject=${sub}&body=${body}`;
+  closeModal('email-modal');toast('Opening Mail...');
+}
+
+// ══════════════════════════════════════
+//  NAV & MODALS
+// ══════════════════════════════════════
+function goPage(page,el){
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('pg-'+page).classList.add('on');
+  el.classList.add('on');
+  document.getElementById('scroll').scrollTop=0;
+}
+
+function openModal(id){document.getElementById(id).classList.add('on');}
+function closeModal(id){document.getElementById(id).classList.remove('on');}
+
+document.querySelectorAll('.overlay').forEach(o=>{
+  o.addEventListener('click',function(e){if(e.target===this)this.classList.remove('on');});
+});
+
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('on');
+  clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2500);
+}
+
+// INIT
+renderAll();
+</script>
+</body>
+</html>
